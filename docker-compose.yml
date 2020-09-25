@@ -1,0 +1,50 @@
+version: "3.7"
+
+services:
+  mysql:
+    build:
+      context: ./mysql
+      args:
+        - MYSQL_VERSION=${MYSQL_VERSION}
+    image: ${PROJECT_NAME}-mysql-img
+    container_name: "${PROJECT_NAME}_mysql"
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - TZ=${TIMEZONE}
+    volumes:
+      - ${DATA_PATH_HOST}/mysql:/var/lib/mysql
+    ports:
+      - "${MYSQL_PORT}:3306"
+    user: "1000:50"
+    command: --innodb-use-native-aio=0
+
+  rails:
+    container_name: ${PROJECT_NAME}-rails
+    build: rails/
+    image: ${PROJECT_NAME}-rails-img
+    volumes:
+      - ./rails:/rails
+    ports:
+      - "${RAILS_PORT}:23450"
+    depends_on: 
+      - mysql
+    stdin_open: true
+    tty: true
+
+  nuxt:
+    build:
+      context: ./nuxt
+      dockerfile: Dockerfile
+    image: ${PROJECT_NAME}-nuxt-img
+    container_name: "${PROJECT_NAME}_nuxt_app"
+    environment:
+      - HOST=0.0.0.0
+    volumes:
+      - ./nuxt:/nuxt:cached
+    ports:
+      - ${NUXT_PORT}:8080
+    stdin_open: true
+    tty: true
