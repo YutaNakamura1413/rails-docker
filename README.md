@@ -107,7 +107,6 @@ RAILS_PORT=23450
 
 ### NUXT #################################################
 NUXT_PORT=8080
-
 ```
 
 # APIサーバー(Rails)構築
@@ -181,7 +180,7 @@ $ docker-compose run rails rails new . --database=mysql --api
 
 database.ymlにpasswordとhostを設定
 
-```yml: rails/src/config/database.yml
+```yml:rails/src/config/database.yml
 default: &default
   adapter: mysql2
   encoding: utf8mb4
